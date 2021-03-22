@@ -264,23 +264,7 @@ jobs:
             # your code here
       # Here's where you will add some code to rollback on failure  
 
-cleanup:
-    docker:
-      - image: cimg/base:2020.01
-    steps:
-      - checkout
-      - aws-cli/setup
-      - run:
-          name: Remove old stacks and files
-          command: |
-            export OldWorkflowID=$(curl -H "token: << pipeline.parameters.memstash-token >>" --request GET https://api.memstash.io/values/old_workflow_id_${CIRCLE_WORKFLOW_ID})
-            echo "Old Workflow ID: ${OldWorkflowID}"
-            if [ "${OldWorkflowID}" != "<< pipeline.parameters.workflow-id >>" ]
-            then
-              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-            fi
+
             
 workflows:
   default:
@@ -312,5 +296,4 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+  
