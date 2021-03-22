@@ -130,7 +130,7 @@ jobs:
       - image: cimg/base:2020.01
     steps:
       - checkout
-      - aws-cli/setup
+      - run: yum -y install tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
